@@ -15,7 +15,6 @@ public class InitManager {
     public InitManager() {
         initializersOnLoad = new ImmutableClassToInstanceMap.Builder<Initable>()
                 .put(PacketEventsInit.class, new PacketEventsInit())
-                .put(DefaultConfigGenerator.class, new DefaultConfigGenerator())
                 .build();
 
         initializersOnStart = new ImmutableClassToInstanceMap.Builder<Initable>()
@@ -26,7 +25,6 @@ public class InitManager {
                 .put(TickEndEvent.class, new TickEndEvent())
                 .put(CommandRegister.class, new CommandRegister())
                 .put(BStats.class, new BStats())
-                .put(DiscordManager.class, new DiscordManager())
                 .build();
 
         initializersOnStop = new ImmutableClassToInstanceMap.Builder<Initable>()

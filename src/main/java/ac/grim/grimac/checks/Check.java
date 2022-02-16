@@ -3,11 +3,13 @@ package ac.grim.grimac.checks;
 import ac.grim.grimac.GrimAPI;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.ColorUtil;
-import ac.grim.grimac.utils.events.FlagEvent;
+import ac.grim.grimac.utils.events.GrimAlertEvent;
+import ac.grim.grimac.utils.events.GrimFlagEvent;
 import ac.grim.grimac.utils.math.GrimMath;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 // Class from https://github.com/Tecnio/AntiCheatBase/blob/master/src/main/java/me/tecnio/anticheat/check/Check.java
@@ -51,7 +53,7 @@ public class Check<T> {
     }
 
     public final boolean increaseViolationNoSetback() {
-        FlagEvent event = new FlagEvent(player, getCheckName(), getViolations());
+        GrimFlagEvent event = new GrimFlagEvent(player, getCheckName(), getViolations());
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return false;
 
@@ -97,10 +99,6 @@ public class Check<T> {
         player.user.sendMessage(ChatColor.AQUA + "[Debug] " + ChatColor.GREEN + object);
     }
 
-    public final void broadcast(final Object object) {
-        Bukkit.broadcastMessage(ChatColor.AQUA + "[GrimAC] " + ChatColor.GRAY + object);
-    }
-
     public void reload() {
         decay = getConfig().getDouble(configName + ".decay");
         alertVL = getConfig().getDouble(configName + ".dont-alert-until");
@@ -118,27 +116,11 @@ public class Check<T> {
         if (getViolations() < alertVL) return;
         // To reduce spam, some checks only alert 10% of the time
         if (alertInterval != 0 && alertCount++ % alertInterval != 0) return;
-
-        String alertString = getConfig().getString("alerts.format", "%prefix% &f%player% &bfailed &f%check_name% &f(x&c%vl%&f) &7%verbose%");
-        alertString = alertString.replace("%prefix%", getConfig().getString("prefix", "&bGrim &8»"));
-        if (player.bukkitPlayer != null) {
-            alertString = alertString.replace("%player%", player.bukkitPlayer.getName());
-        }
-        alertString = alertString.replace("%check_name%", checkName);
-        alertString = alertString.replace("%vl%", violations);
-        alertString = alertString.replace("%verbose%", verbose);
-
-        if (!secretTestServerVLStyle) { // Production
-            Bukkit.broadcast(ColorUtil.format(alertString), "grim.alerts");
-        } else { // Test server
-            player.user.sendMessage(ColorUtil.format(alertString));
-        }
-
-        GrimAPI.INSTANCE.getDiscordManager().sendAlert(player, checkName, violations, verbose);
+        Bukkit.getPluginManager().callEvent(new GrimAlertEvent(player, checkName, violations, verbose));
     }
 
-    public FileConfiguration getConfig() {
-        return GrimAPI.INSTANCE.getPlugin().getConfig();
+    public ConfigurationSection getConfig() {
+        return GrimAPI.INSTANCE.getConfig();
     }
 
     public void setbackIfAboveSetbackVL() {

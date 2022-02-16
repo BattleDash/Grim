@@ -4,7 +4,7 @@ import ac.grim.grimac.checks.CheckData;
 import ac.grim.grimac.checks.type.PostPredictionCheck;
 import ac.grim.grimac.player.GrimPlayer;
 import ac.grim.grimac.utils.anticheat.update.PredictionComplete;
-import ac.grim.grimac.utils.events.OffsetAlertEvent;
+import ac.grim.grimac.utils.events.GrimOffsetAlertEvent;
 import ac.grim.grimac.utils.math.GrimMath;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +34,7 @@ public class OffsetHandler extends PostPredictionCheck {
             if (offset > offsetHandler.getThreshold()) {
                 String name = (vehicle ? "Vehicle Prediction" : "Prediction") + "-" + offsetHandler.getName();
 
-                OffsetAlertEvent event = new OffsetAlertEvent(player, name, offset, offsetHandler.getViolations(), vehicle);
+                GrimOffsetAlertEvent event = new GrimOffsetAlertEvent(player, name, offset, offsetHandler.getViolations(), vehicle);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
 
@@ -96,8 +96,6 @@ public class OffsetHandler extends PostPredictionCheck {
 
     @Override
     public void reload() {
-        secretTestServerVLStyle = getConfig().getBoolean("test-mode", false);
-
         List<OffsetData> offsets = new ArrayList<>();
         loadOffsets(offsets, "Prediction");
         this.regularOffsets = offsets;

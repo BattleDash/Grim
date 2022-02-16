@@ -2,13 +2,13 @@ package ac.grim.grimac.utils.events;
 
 import ac.grim.grimac.player.GrimPlayer;
 
-public class OffsetAlertEvent extends FlagEvent {
+public class GrimOffsetAlertEvent extends GrimFlagEvent {
     private final double offset;
     private final boolean vehicle;
     private final double violations;
     private boolean cancelled;
 
-    public OffsetAlertEvent(GrimPlayer player, String checkName, double offset, double violations, boolean vehicle) {
+    public GrimOffsetAlertEvent(GrimPlayer player, String checkName, double offset, double violations, boolean vehicle) {
         super(player, checkName, violations);
         this.offset = offset;
         this.vehicle = vehicle;
