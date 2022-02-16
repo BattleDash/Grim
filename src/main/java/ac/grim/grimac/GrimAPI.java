@@ -18,8 +18,9 @@ public enum GrimAPI {
     private ConfigurationSection config;
     private JavaPlugin plugin;
 
-    public void load(final JavaPlugin plugin) {
+    public void load(final JavaPlugin plugin, ConfigurationSection config) {
         this.plugin = plugin;
+        this.config = config;
         initManager.load();
     }
 
