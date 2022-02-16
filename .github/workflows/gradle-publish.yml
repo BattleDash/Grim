@@ -8,6 +8,7 @@
 name: Gradle Package
 
 on:
+  push: {}
   release:
     types: [created]
 
@@ -28,6 +29,9 @@ jobs:
         distribution: 'temurin'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
